@@ -1,0 +1,13 @@
+{
+  "name": "DLT SupplyChain Workflow",
+  "tasks": [
+    {
+      "task_key": "dlt_pipeline_run",
+      "pipeline_task": {
+        "pipeline_id": "{{pipeline_id}}"
+      }
+    }
+  ],
+  "timeout_seconds": 0,
+  "max_concurrent_runs": 1
+}

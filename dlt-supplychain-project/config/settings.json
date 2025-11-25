@@ -1,0 +1,6 @@
+{
+  "source_path": "/FileStore/raw/",
+  "bronze_path": "dbfs:/pipelines/bronze/",
+  "silver_path": "dbfs:/pipelines/silver/",
+  "gold_path": "dbfs:/pipelines/gold/"
+}

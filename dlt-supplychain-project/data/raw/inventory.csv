@@ -1,0 +1,6 @@
+product_id,product_name,stock_level,warehouse
+101,Laptop,50,WH1
+102,Mobile,70,WH1
+103,Tablet,40,WH2
+104,Headphones,90,WH2
+105,Keyboard,120,WH3
