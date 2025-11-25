@@ -15,17 +15,13 @@ jobs:
     - name: Install Databricks CLI
       run: pip install databricks-cli
 
-    # - name: Configure Databricks CLI
-    #   run: |
-    #     databricks configure --token <<EOF
-    #     $DATABRICKS_HOST
-    #     $DATABRICKS_TOKEN
-    #     EOF
     - name: Configure Databricks CLI (Recommended)
+      env:
+        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+        DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
       run: |
-      export DATABRICKS_HOST=${{ secrets.DATABRICKS_HOST }}
-      export DATABRICKS_TOKEN=${{ secrets.DATABRICKS_TOKEN }}
-      databricks configure --token <<< "${DATABRICKS_HOST}"$'\n'"${DATABRICKS_TOKEN}"
+        databricks configure --token <<< "${DATABRICKS_HOST}"$'\n'"${DATABRICKS_TOKEN}"
+
     - name: Validate DLT Pipeline
       run: databricks pipelines validate --json-file dlt_pipeline/pipeline.json
 
