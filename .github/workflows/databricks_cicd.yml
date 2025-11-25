@@ -1,38 +1,27 @@
-name: Databricks DLT CI/CD
+name: Databricks Sync (Community Edition)
 
 on:
   push:
     branches: ["main"]
 
 jobs:
-  deploy:
+  sync:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Repo
       uses: actions/checkout@v4
 
-    - name: Install Databricks CLI v1.x
+    - name: Install Databricks CLI (new version)
       run: |
-        pip install databricks-cli --upgrade
-        databricks -v
+        curl -fsSL https://raw.githubusercontent.com/databricks/cli/main/install.sh | sh
 
-    - name: Configure Databricks CLI
+    - name: Configure CLI Auth
       run: |
-        mkdir -p ~/.databricks
-        cat <<EOF > ~/.databricks/config
-        host = "${{ secrets.DATABRICKS_HOST }}"
-        token = "${{ secrets.DATABRICKS_TOKEN }}"
-        EOF
+        databricks configure --host "${{ secrets.DATABRICKS_HOST }}" --token "${{ secrets.DATABRICKS_TOKEN }}"
 
-    - name: Validate the DLT Deployment Bundle
+    - name: Push Code to Databricks Repo
       run: |
-        databricks bundle validate -t dev
-
-    - name: Deploy DLT Pipeline
-      run: |
-        databricks bundle deploy -t dev
-
-    - name: Run DLT Pipeline
-      run: |
-        databricks bundle run -t dev
+        databricks repos update \
+        --repo-id ${{ "/Users/chaitanya12223@gmail.com/Supplychain-DB" }} \
+        --branch main
