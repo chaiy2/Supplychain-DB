@@ -12,21 +12,27 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v4
 
-    - name: Install Databricks CLI v2
-      run: pip install databricks-cli
+    - name: Install Databricks CLI v1.x
+      run: |
+        pip install databricks-cli --upgrade
+        databricks -v
 
     - name: Configure Databricks CLI
       run: |
-        export DATABRICKS_HOST="${{ secrets.DATABRICKS_HOST }}"
-        export DATABRICKS_TOKEN="${{ secrets.DATABRICKS_TOKEN }}"
-        databricks configure --token <<< "${DATABRICKS_HOST}"$'\n'"${DATABRICKS_TOKEN}"
+        mkdir -p ~/.databricks
+        cat <<EOF > ~/.databricks/config
+        host = "${{ secrets.DATABRICKS_HOST }}"
+        token = "${{ secrets.DATABRICKS_TOKEN }}"
+        EOF
 
-    - name: Create or Update Pipeline
+    - name: Validate the DLT Deployment Bundle
       run: |
-        databricks pipelines update --json-file dlt_pipeline/pipeline.json || \
-        databricks pipelines create --json-file dlt_pipeline/pipeline.json
+        databricks bundle validate -t dev
 
-    - name: Trigger Pipeline Run
+    - name: Deploy DLT Pipeline
       run: |
-        PIPELINE_ID=$(jq -r '.id' dlt_pipeline/pipeline.json)
-        databricks pipelines start --pipeline-id "$PIPELINE_ID"
+        databricks bundle deploy -t dev
+
+    - name: Run DLT Pipeline
+      run: |
+        databricks bundle run -t dev
